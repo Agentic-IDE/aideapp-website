@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PARTICLE_COLORS } from '../../constants/theme'
 import type { ContactStatus } from '../../hooks/useContactForm'
 
@@ -22,8 +22,35 @@ interface ContactOverlayProps {
 export function ContactOverlay({ status }: ContactOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const resultOpacity = useRef(0)
+  const [visible, setVisible] = useState(false)
+  const [fading, setFading] = useState(false)
+  const prevStatus = useRef(status)
+
+  // Track visibility and fade-out
+  useEffect(() => {
+    if (status !== 'idle' && !visible) {
+      setFading(false)
+      setVisible(true)
+    }
+    if (status === 'idle' && prevStatus.current !== 'idle') {
+      // Start fade-out
+      setFading(true)
+    }
+    prevStatus.current = status
+  }, [status, visible])
+
+  // Unmount after fade-out transition
+  useEffect(() => {
+    if (!fading) return
+    const timer = setTimeout(() => {
+      setVisible(false)
+      setFading(false)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [fading])
 
   useEffect(() => {
+    if (!visible) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -155,9 +182,9 @@ export function ContactOverlay({ status }: ContactOverlayProps) {
     animId = requestAnimationFrame(frame)
 
     return () => cancelAnimationFrame(animId)
-  }, [status])
+  }, [status, visible])
 
-  if (status === 'idle') return null
+  if (!visible) return null
 
   return (
     <div
@@ -167,7 +194,9 @@ export function ContactOverlay({ status }: ContactOverlayProps) {
         borderRadius: 16,
         overflow: 'hidden',
         zIndex: 10,
-        animation: 'fu 0.3s ease',
+        opacity: fading ? 0 : 1,
+        transition: 'opacity 0.5s ease',
+        animation: fading ? undefined : 'fu 0.3s ease',
       }}
     >
       <canvas

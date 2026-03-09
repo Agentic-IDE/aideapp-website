@@ -1,5 +1,6 @@
-import { YC } from '../../constants/content'
+import { CTA } from '../../constants/content'
 import { Section } from '../layout/Section'
+import { SectionLabel } from '../layout/SectionLabel'
 import { useContactForm } from '../../hooks/useContactForm'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { ContactOverlay } from './ContactOverlay'
@@ -10,43 +11,77 @@ export function YCSection() {
   const isDisabled = status === 'loading' || status === 'success'
 
   return (
-    <Section id="yc">
+    <Section id="cta" className="text-center">
       <div
         ref={ref}
-        className="fade-up yc-block"
-        style={{
-          position: 'relative',
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 16,
-          padding: '56px 64px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 48,
-        }}
+        style={{ position: 'relative', maxWidth: 640, margin: '0 auto' }}
       >
-        <ContactOverlay status={status} />
-        <div>
-          <h2
-            style={{
-              fontFamily: 'var(--fd)',
-              fontSize: 'clamp(28px, 4vw, 48px)',
-              fontWeight: 800,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.1,
-              marginBottom: 16,
-              whiteSpace: 'pre-line',
-            }}
-          >
-            {YC.title}
-          </h2>
-          <p style={{ fontSize: 13, color: 'var(--muted)', maxWidth: 440, lineHeight: 1.85 }}>
-            {YC.description}
-          </p>
+        <SectionLabel centered>{CTA.label}</SectionLabel>
+        <h2
+          className="fade-up"
+          style={{
+            fontFamily: 'var(--fd)',
+            fontSize: 'clamp(36px, 5vw, 58px)',
+            fontWeight: 800,
+            lineHeight: 1,
+            letterSpacing: '-0.03em',
+            marginBottom: 20,
+            whiteSpace: 'pre-line',
+          }}
+        >
+          {CTA.title}
+        </h2>
+        <p
+          className="fade-up"
+          style={{
+            fontSize: 14,
+            color: 'var(--muted)',
+            maxWidth: 500,
+            lineHeight: 1.85,
+            margin: '0 auto 32px',
+          }}
+        >
+          {CTA.subtitle}
+        </p>
+        <ul
+          className="fade-up"
+          style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: '0 auto 40px',
+            maxWidth: 480,
+            textAlign: 'left',
+          }}
+        >
+          {CTA.debtItems.map((item) => (
+            <li
+              key={item}
+              style={{
+                fontSize: 13,
+                color: 'var(--muted)',
+                lineHeight: 1.85,
+                paddingLeft: 20,
+                position: 'relative',
+              }}
+            >
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  color: 'var(--accent)',
+                }}
+              >
+                →
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <div style={{ position: 'relative' }}>
+          <ContactOverlay status={status} />
           <form
-            className="flex flex-col gap-3"
-            style={{ marginTop: 32, maxWidth: 400 }}
+            className="fade-up flex flex-col gap-3"
+            style={{ maxWidth: 400, margin: '0 auto' }}
             onSubmit={handleSubmit}
           >
             <input
@@ -57,30 +92,30 @@ export function YCSection() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isDisabled}
               style={{
-                background: 'var(--dim)',
+                background: 'var(--surface)',
                 border: '1px solid var(--border)',
                 borderRadius: 8,
-                padding: '12px 16px',
+                padding: '14px 20px',
                 fontFamily: 'var(--fm)',
-                fontSize: 13,
+                fontSize: 14,
                 color: 'var(--text)',
                 outline: 'none',
                 transition: 'border-color 0.2s',
               }}
             />
             <textarea
-              placeholder={YC.contactPlaceholder}
+              placeholder={CTA.contactPlaceholder}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={isDisabled}
               rows={3}
               style={{
-                background: 'var(--dim)',
+                background: 'var(--surface)',
                 border: '1px solid var(--border)',
                 borderRadius: 8,
-                padding: '12px 16px',
+                padding: '14px 20px',
                 fontFamily: 'var(--fm)',
-                fontSize: 13,
+                fontSize: 14,
                 color: 'var(--text)',
                 outline: 'none',
                 resize: 'vertical',
@@ -94,55 +129,24 @@ export function YCSection() {
                 background: 'var(--accent)',
                 color: 'var(--bg)',
                 border: 'none',
-                padding: '12px 28px',
+                padding: '14px 32px',
                 borderRadius: 8,
                 fontFamily: 'var(--fd)',
-                fontSize: 14,
+                fontSize: 15,
                 fontWeight: 700,
                 cursor: isDisabled ? 'default' : 'pointer',
-                alignSelf: 'flex-start',
                 transition: 'transform 0.2s, opacity 0.2s',
               }}
             >
-              {YC.contactButton}
+              {CTA.buttonLabel}
             </button>
           </form>
-        </div>
-        {/* YC Badge */}
-        <div
-          className="shrink-0 text-center"
-          style={{
-            background: 'var(--dim)',
-            border: '1px solid var(--border)',
-            borderRadius: 12,
-            padding: '32px 40px',
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--fd)',
-              fontSize: 48,
-              fontWeight: 800,
-              color: '#FF6B00',
-              display: 'block',
-              marginBottom: 8,
-            }}
+          <p
+            className="fade-up"
+            style={{ marginTop: 16, fontSize: 11, color: 'var(--muted)' }}
           >
-            {YC.badge.logo}
-          </span>
-          <div
-            style={{
-              fontSize: 10,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-            }}
-          >
-            {YC.badge.label}
-          </div>
-          <div style={{ fontFamily: 'var(--fd)', fontSize: 22, fontWeight: 700, marginTop: 4 }}>
-            {YC.badge.season}
-          </div>
+            {CTA.note}
+          </p>
         </div>
       </div>
     </Section>

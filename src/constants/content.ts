@@ -3,8 +3,7 @@ import type { NavLink, StatItem, ModeCardContent, TerminalLine, AnimatedTerminal
 export const NAV_LINKS: NavLink[] = [
   { label: 'Mission', href: '#mission' },
   { label: 'Platform', href: '#modes' },
-  { label: 'YC S26', href: '#yc' },
-  { label: 'Request Access', href: '#waitlist', cta: true },
+  { label: 'Request Access', href: '#cta', cta: true },
 ]
 
 export const HERO = {
@@ -12,7 +11,7 @@ export const HERO = {
   titleLines: ['The IDE that', 'fixes itself', 'as you build.'],
   subtitle:
     'Agentic IDE is the first AI-native development platform with three modes — recover from debt, build with intelligence, and architect without compromise.',
-  primaryCta: { label: 'Request Early Access →', href: '#waitlist' },
+  primaryCta: { label: 'Request Early Access →', href: '#cta' },
   ghostCta: { label: 'See the platform', href: '#modes' },
 }
 
@@ -215,25 +214,19 @@ export const MODE_CARDS: ModeCardContent[] = [
   },
 ]
 
-export const YC = {
-  title: 'Targeting\nYC Summer 2026.',
-  description:
-    "We're building Agentic IDE to be the standard development platform for the agentic era. Looking for investors, advisors, and design partners who see where software development is going.",
-  contactPlaceholder: 'Tell us about your use case (optional)',
-  contactButton: 'Send →',
-  badge: {
-    logo: 'YC',
-    label: 'Applying to',
-    season: 'Summer 2026',
-  },
-}
-
-export const WAITLIST = {
+export const CTA = {
   label: 'Early Access',
   title: 'Stop paying the\ntech debt tax.',
   subtitle: "Join engineering teams getting early access. We're onboarding selectively.",
-  buttonLabel: 'Join Waitlist →',
-  successLabel: "✓ You're on the list",
+  debtItems: [
+    'AI generates code 40% faster — and 1.7x more defects',
+    'Copy-paste suggestions replace proper abstractions',
+    'Test coverage drops, so refactors become risky',
+    'Each shortcut makes the next feature slower to ship',
+    'Within a year, teams spend more time maintaining than building',
+  ],
+  contactPlaceholder: 'Tell us about your use case (optional)',
+  buttonLabel: 'Request Access →',
   note: 'No spam. Early access invites sent in order of signup.',
 }
 
