@@ -18,13 +18,19 @@ export function useTypewriter(phrases: Phrase[], opts?: TypewriterOptions) {
   const [phase, setPhase] = useState<Phase>('typing')
   const indexRef = useRef(0)
   const phraseIndexRef = useRef(0)
+  const poolRef = useRef<number[]>([])
 
   const currentPhrase = phrases[phraseIndexRef.current]
 
   const nextPhrase = useCallback(() => {
-    // Always alternate: index 0 ("Agentic IDE"), then random from rest, repeat
+    // Alternate: index 0 ("Agentic IDE"), then pick from shuffle pool, repeat
     if (phraseIndexRef.current === 0 && phrases.length > 1) {
-      phraseIndexRef.current = 1 + Math.floor(Math.random() * (phrases.length - 1))
+      if (poolRef.current.length === 0) {
+        // Refill pool with indices 1..N-1
+        poolRef.current = Array.from({ length: phrases.length - 1 }, (_, i) => i + 1)
+      }
+      const pick = Math.floor(Math.random() * poolRef.current.length)
+      phraseIndexRef.current = poolRef.current.splice(pick, 1)[0]
     } else {
       phraseIndexRef.current = 0
     }
