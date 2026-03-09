@@ -1,6 +1,9 @@
 import { NAV_LINKS } from '../../constants/content'
+import { useTypewriter } from '../../hooks/useTypewriter'
 
 export function Navbar() {
+  const { displayText, isTyping } = useTypewriter('Agentic IDE')
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-100 flex items-center justify-between"
@@ -14,9 +17,26 @@ export function Navbar() {
       <a
         href="#"
         className="no-underline"
-        style={{ fontFamily: 'var(--fd)', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', color: 'var(--text)' }}
+        style={{
+          fontFamily: 'var(--fm)',
+          fontWeight: 800,
+          fontSize: 18,
+          letterSpacing: '-0.02em',
+          color: 'var(--text)',
+          whiteSpace: 'nowrap',
+          minWidth: '10ch',
+        }}
       >
-        Agentic IDE
+        {displayText}
+        <span
+          style={{
+            animation: isTyping ? 'none' : 'blink 1s step-end infinite',
+            marginLeft: 1,
+            fontWeight: 400,
+          }}
+        >
+          |
+        </span>
       </a>
       <ul className="nav-links flex items-center gap-8 list-none">
         {NAV_LINKS.map((link) => (

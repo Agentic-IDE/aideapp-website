@@ -1,14 +1,26 @@
-import { sql } from '@vercel/postgres'
+import { put, list } from '@vercel/blob'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-async function ensureTable() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS waitlist_emails (
-      id SERIAL PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `
+const BLOB_PATH = 'waitlist/emails.json'
+
+interface WaitlistEntry {
+  email: string
+  created_at: string
+}
+
+async function getEmails(): Promise<WaitlistEntry[]> {
+  const { blobs } = await list({ prefix: BLOB_PATH })
+  if (blobs.length === 0) return []
+  const res = await fetch(blobs[0].url)
+  return res.json()
+}
+
+async function saveEmails(entries: WaitlistEntry[]): Promise<void> {
+  await put(BLOB_PATH, JSON.stringify(entries), {
+    access: 'public',
+    addRandomSuffix: false,
+    contentType: 'application/json',
+  })
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -19,8 +31,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-      await ensureTable()
-      await sql`INSERT INTO waitlist_emails (email) VALUES (${email}) ON CONFLICT (email) DO NOTHING`
+      const entries = await getEmails()
+      if (entries.some((e) => e.email === email)) {
+        return res.status(200).json({ success: true, message: "You're on the list!" })
+      }
+      entries.unshift({ email, created_at: new Date().toISOString() })
+      await saveEmails(entries)
       return res.status(200).json({ success: true, message: "You're on the list!" })
     } catch (err) {
       console.error('Waitlist insert error:', err)
@@ -30,9 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'GET') {
     try {
-      await ensureTable()
-      const { rows } = await sql`SELECT email, created_at FROM waitlist_emails ORDER BY created_at DESC`
-      return res.status(200).json({ emails: rows })
+      const entries = await getEmails()
+      return res.status(200).json({ emails: entries })
     } catch (err) {
       console.error('Waitlist fetch error:', err)
       return res.status(500).json({ success: false, message: 'Something went wrong' })
