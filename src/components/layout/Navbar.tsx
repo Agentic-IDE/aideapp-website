@@ -1,0 +1,63 @@
+import { NAV_LINKS } from '../../constants/content'
+
+export function Navbar() {
+  return (
+    <nav
+      className="fixed top-0 left-0 right-0 z-100 flex items-center justify-between"
+      style={{
+        padding: '20px 48px',
+        background: 'rgba(0, 0, 0, 0.9)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid var(--border)',
+      }}
+    >
+      <a
+        href="#"
+        className="no-underline flex items-center gap-2.5"
+        style={{ fontFamily: 'var(--fd)', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', color: 'var(--text)' }}
+      >
+        <div
+          className="flex items-center justify-center"
+          style={{
+            width: 28,
+            height: 28,
+            background: 'var(--accent)',
+            borderRadius: 6,
+            color: 'var(--bg)',
+            fontSize: 13,
+            fontWeight: 800,
+          }}
+        >
+          ⌘
+        </div>
+        Agentic IDE
+      </a>
+      <ul className="nav-links flex items-center gap-8 list-none">
+        {NAV_LINKS.map((link) => (
+          <li key={link.label}>
+            <a
+              href={link.href}
+              className="no-underline transition-colors"
+              style={{
+                color: link.cta ? 'var(--bg)' : 'var(--muted)',
+                fontSize: 12,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                ...(link.cta
+                  ? {
+                      background: 'var(--accent)',
+                      padding: '8px 20px',
+                      borderRadius: 6,
+                      fontWeight: 600,
+                    }
+                  : {}),
+              }}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

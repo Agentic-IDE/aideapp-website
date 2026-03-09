@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic IDE — The AI Development Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080A0E;--surface:#0E1117;--surface2:#141820;--border:#1E2430;
+      --accent:#C8F135;--accent2:#4DFFA0;--accent3:#4DB8FF;--accent4:#FF8C4D;
+      --text:#E8EDF5;--muted:#5A6478;--dim:#2A3040;
+      --fd:'Space Grotesk',sans-serif;--fm:'JetBrains Mono',monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--fm);line-height:1.6;overflow-x:hidden}
+    body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.22;pointer-events:none;z-index:0}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:rgba(8,10,14,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:var(--fd);font-weight:800;font-size:18px;letter-spacing:-.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+    .nlm{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--bg);font-size:13px;font-weight:800}
+    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+    .nav-links a:hover{color:var(--text)}
+    .nc{background:var(--accent)!important;color:var(--bg)!important;padding:8px 20px;border-radius:6px;font-weight:600}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:0 48px;position:relative;z-index:1}
+
+    .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:140px 48px 80px;max-width:1200px;margin:0 auto;position:relative;z-index:1}
+    .hbadge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:40px;width:fit-content;animation:fu .6s ease both}
+    .bdot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+    .hero h1{font-family:var(--fd);font-size:clamp(48px,8vw,96px);font-weight:800;line-height:.93;letter-spacing:-.04em;margin-bottom:32px;animation:fu .6s .1s ease both}
+    .hero h1 em{font-style:normal;color:var(--accent)}
+    .hero-sub{font-size:15px;color:var(--muted);max-width:540px;line-height:1.85;margin-bottom:48px;animation:fu .6s .2s ease both}
+    .hactions{display:flex;gap:16px;flex-wrap:wrap;animation:fu .6s .3s ease both}
+    .bp{background:var(--accent);color:var(--bg);border:none;padding:14px 32px;border-radius:8px;font-family:var(--fd);font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .2s,opacity .2s}
+    .bp:hover{transform:translateY(-2px);opacity:.9}
+    .bg{background:transparent;color:var(--muted);border:1px solid var(--border);padding:14px 32px;border-radius:8px;font-family:var(--fm);font-size:13px;cursor:pointer;text-decoration:none;transition:color .2s,border-color .2s}
+    .bg:hover{color:var(--text);border-color:var(--muted)}
+
+    .hterm{margin-top:64px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:fu .6s .4s ease both}
+    .tbar{background:var(--surface2);padding:12px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+    .td{width:10px;height:10px;border-radius:50%}.td.r{background:#FF5F57}.td.y{background:#FFBD2E}.td.g{background:#28C840}
+    .ttitle{margin-left:8px;font-size:12px;color:var(--muted)}
+    .tbody{padding:28px 32px;font-size:12px;line-height:2.1}
+    .tp{color:var(--accent)}.tc{color:var(--text)}.to{color:var(--muted)}.ts{color:var(--accent2)}.tw{color:#FFB547}.tb{color:var(--accent3)}
+    .tl{display:block}
+    .cursor{display:inline-block;width:7px;height:13px;background:var(--accent);vertical-align:middle;animation:blink 1s step-end infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    section{padding:100px 0}
+    .slabel{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+    .slabel::before{content:'';width:24px;height:1px;background:var(--accent)}
+    .stitle{font-family:var(--fd);font-size:clamp(36px,5vw,58px);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:20px}
+    .ssub{font-size:14px;color:var(--muted);max-width:500px;line-height:1.85;margin-bottom:56px}
+
+    .modes{display:flex;flex-direction:column;gap:12px}
+    .mcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px 56px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;transition:border-color .3s}
+    .mcard:hover{border-color:var(--dim)}
+    .mcard.fde{border-left:3px solid var(--accent)}
+    .mcard.ide{border-left:3px solid var(--accent3)}
+    .mcard.arch{border-left:3px solid var(--accent4)}
+    .mtag{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+    .mtag .dot{width:8px;height:8px;border-radius:50%}
+    .mtag.fde{color:var(--accent)}.mtag.fde .dot{background:var(--accent)}
+    .mtag.ide{color:var(--accent3)}.mtag.ide .dot{background:var(--accent3)}
+    .mtag.arch{color:var(--accent4)}.mtag.arch .dot{background:var(--accent4)}
+    .mtitle{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:16px;line-height:1.1}
+    .mdesc{font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:24px}
+    .mfeats{display:flex;flex-direction:column;gap:10px}
+    .mfeat{display:flex;align-items:flex-start;gap:12px;font-size:12px;color:var(--muted)}
+    .mfeat::before{content:'→';color:var(--accent);font-size:11px;flex-shrink:0;margin-top:2px}
+    .mcard.ide .mfeat::before{color:var(--accent3)}
+    .mcard.arch .mfeat::before{color:var(--accent4)}
+    .mvis{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:24px;font-size:11px;line-height:2}
+    .mvt{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+    .mblock{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:64px;position:relative;overflow:hidden}
+    .mblock::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,241,53,.07) 0%,transparent 70%);pointer-events:none}
+    .mtext{font-family:var(--fd);font-size:clamp(22px,3.5vw,40px);font-weight:700;line-height:1.2;letter-spacing:-.02em;max-width:780px}
+    .mtext span{color:var(--accent)}
+    .mstats{margin-top:48px;display:flex;align-items:center;gap:48px;flex-wrap:wrap}
+    .stat{display:flex;flex-direction:column;gap:4px}
+    .snum{font-family:var(--fd);font-size:40px;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+    .slbl{font-size:12px;color:var(--muted);letter-spacing:.04em}
+    .sdiv{width:1px;height:48px;background:var(--border)}
+
+    .ycblock{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:56px 64px;display:flex;align-items:center;justify-content:space-between;gap:48px}
+    .yctext h2{font-family:var(--fd);font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:16px}
+    .yctext p{font-size:13px;color:var(--muted);max-width:440px;line-height:1.85}
+    .ycact{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap}
+    .ycbadge{flex-shrink:0;background:var(--dim);border:1px solid var(--border);border-radius:12px;padding:32px 40px;text-align:center}
+    .yclogo{font-family:var(--fd);font-size:48px;font-weight:800;color:#FF6B00;display:block;margin-bottom:8px}
+    .yclbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .ycseason{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);margin-top:4px}
+
+    .wsect{text-align:center}
+    .wsect .slabel{justify-content:center}
+    .wsect .slabel::before{display:none}
+    .wsect .ssub{margin:0 auto 40px}
+    .wform{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .winput{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 20px;font-family:var(--fm);font-size:14px;color:var(--text);width:300px;outline:none;transition:border-color .2s}
+    .winput:focus{border-color:var(--accent)}
+    .winput::placeholder{color:var(--muted)}
+    .wnote{margin-top:16px;font-size:11px;color:var(--muted)}
+
+    footer{border-top:1px solid var(--border);padding:40px 48px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;position:relative;z-index:1}
+    .flogo{font-family:var(--fd);font-weight:800;font-size:16px;color:var(--muted)}
+    .fright{font-size:12px;color:var(--muted)}
+
+    @keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:900px){
+      nav{padding:16px 24px}.nav-links{display:none}
+      .hero,.wrap{padding-left:24px;padding-right:24px}
+      section{padding:60px 0}
+      .mcard{grid-template-columns:1fr;padding:32px}
+      .ycblock{flex-direction:column;padding:40px 32px}
+      .mblock{padding:40px 32px}
+      footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo"><div class="nlm">⌘</div>Agentic IDE</a>
+  <ul class="nav-links">
+    <li><a href="#modes">Platform</a></li>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#yc">YC S26</a></li>
+    <li><a href="#waitlist" class="nc">Request Access</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hbadge"><span class="bdot"></span>Now in private beta</div>
+  <h1>The IDE that<br /><em>fixes itself</em><br />as you build.</h1>
+  <p class="hero-sub">Agentic IDE is the first AI-native development platform with three modes — recover from debt, build with intelligence, and architect without compromise.</p>
+  <div class="hactions">
+    <a href="#waitlist" class="bp">Request Early Access →</a>
+    <a href="#modes" class="bg">See the platform</a>
+  </div>
+  <div class="hterm">
+    <div class="tbar">
+      <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+      <span class="ttitle">aide fde — analyzing workspace</span>
+    </div>
+    <div class="tbody">
+      <span class="tl"><span class="tp">❯</span> <span class="tc">aide fde init ./src</span></span>
+      <span class="tl to">  Scanning codebase patterns...</span>
+      <span class="tl tw">  ⚠ 47 structural issues across 23 files</span>
+      <span class="tl to">  ↳ Missing abstraction layers, 12% test coverage</span>
+      <span class="tl"> </span>
+      <span class="tl tb">  AI FDE: What are your architecture standards?</span>
+      <span class="tl tc">  &gt; Clean architecture, domain-driven, full e2e coverage</span>
+      <span class="tl"> </span>
+      <span class="tl to">  Generating safe refactor plan...</span>
+      <span class="tl ts">  ✓ Skill injected: clean-architecture-v3</span>
+      <span class="tl ts">  ✓ Refactoring 23 files → layered domain structure</span>
+      <span class="tl ts">  ✓ E2E tests: 89/89 passing — coverage 12% → 84%</span>
+      <span class="tl"> </span>
+      <span class="tl"><span class="tp">❯</span> <span class="cursor"></span></span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="slabel">Mission</div>
+    <div class="mblock fade-up">
+      <p class="mtext">Engineering teams lose <span>up to 42% of their time</span> to technical debt. We built the platform that eliminates it — before it starts, while you build, and after it accumulates.</p>
+      <div class="mstats">
+        <div class="stat"><span class="snum">42%</span><span class="slbl">Dev time lost to tech debt</span></div>
+        <div class="sdiv"></div>
+        <div class="stat"><span class="snum">$1.52T</span><span class="slbl">Global tech debt cost</span></div>
+        <div class="sdiv"></div>
+        <div class="stat"><span class="snum">3</span><span class="slbl">Modes. One platform.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="wrap">
+    <div class="slabel">The Platform</div>
+    <h2 class="stitle">Three modes.<br />Every phase.</h2>
+    <p class="ssub">Whether you're starting fresh, maintaining a healthy codebase, or recovering from years of debt — AIDE has a dedicated agent for it.</p>
+    <div class="modes">
+
+      <div class="mcard fde fade-up">
+        <div>
+          <div class="mtag fde"><span class="dot"></span>AI FDE — Field Development Engineer</div>
+          <div class="mtitle">Recover from<br />existing debt.</div>
+          <p class="mdesc">AI FDE scans your codebase, holds a conversation to understand your architecture standards, then performs a full code review and executes refactors — with e2e tests at every step so nothing breaks.</p>
+          <div class="mfeats">
+            <div class="mfeat">Conversational intake — describe your standards in plain English</div>
+            <div class="mfeat">Architecture-aligned refactors across the entire codebase</div>
+            <div class="mfeat">E2E tests generated and run before every change</div>
+            <div class="mfeat">Tech debt heat map — visualize debt density across your repo</div>
+            <div class="mfeat">Skill health monitoring — skills stay current as code evolves</div>
+          </div>
+        </div>
+        <div class="mvis">
+          <div class="mvt">AI FDE Session</div>
+          <span class="tl tb">AI FDE: Tell me your architecture goals.</span>
+          <span class="tl tc">&gt; Domain-driven, clean layers, no circular deps</span>
+          <span class="tl"> </span>
+          <span class="tl to">Analyzing 847 files...</span>
+          <span class="tl tw">⚠ 23 circular deps found</span>
+          <span class="tl tw">⚠ 41 business logic leaks in controllers</span>
+          <span class="tl"> </span>
+          <span class="tl ts">✓ Safe plan ready — 0 breaking changes</span>
+          <span class="tl ts">✓ Coverage will increase 12% → 84%</span>
+        </div>
+      </div>
+
+      <div class="mcard ide fade-up">
+        <div>
+          <div class="mtag ide"><span class="dot"></span>AI IDE — Intelligent Development Environment</div>
+          <div class="mtitle">Build without<br />accumulating debt.</div>
+          <p class="mdesc">A terminal IDE with skill profiles, branch isolation per session, and agentic assistance built in. Multiple agents can work in parallel across branches without conflicts.</p>
+          <div class="mfeats">
+            <div class="mfeat">Terminal instance spawner with isolated skill profiles</div>
+            <div class="mfeat">Automatic folder cloning — each session in its own branch</div>
+            <div class="mfeat">Skill output logs — full visibility into every agent action</div>
+            <div class="mfeat">Multi-agent parallel workflows across branches</div>
+            <div class="mfeat">Container support for safe, reproducible environments</div>
+          </div>
+        </div>
+        <div class="mvis">
+          <div class="mvt">IDE Session Manager</div>
+          <span class="tl to">Active sessions:</span>
+          <span class="tl ts">● session-1  feat/auth-refactor    3 skills</span>
+          <span class="tl ts">● session-2  feat/api-layer         2 skills</span>
+          <span class="tl tw">● session-3  fix/performance         agents running</span>
+          <span class="tl"> </span>
+          <span class="tl tc">14:32 [clean-arch]  Injected layer boundary</span>
+          <span class="tl tc">14:33 [doc-gen]     Updated 8 function docs</span>
+          <span class="tl ts">14:34 [test-gen]    Generated 12 new cases</span>
+        </div>
+      </div>
+
+      <div class="mcard arch fade-up">
+        <div>
+          <div class="mtag arch"><span class="dot"></span>AI Architect — New Project Mode</div>
+          <div class="mtitle">Start every project<br />the right way.</div>
+          <p class="mdesc">AI Architect uses enhanced plan mode and agent teams to generate starting architecture, skill profiles, and full implementation plans — so you never accumulate debt from day one.</p>
+          <div class="mfeats">
+            <div class="mfeat">Architecture designed before a single line is written</div>
+            <div class="mfeat">Agent teams collaborate on domain model and API contracts</div>
+            <div class="mfeat">Custom skill profiles generated per project type</div>
+            <div class="mfeat">Full implementation plan with milestones and checkpoints</div>
+            <div class="mfeat">Cross-platform and containerized from the start</div>
+          </div>
+        </div>
+        <div class="mvis">
+          <div class="mvt">Architect Plan Mode</div>
+          <span class="tl to">Project: SaaS API Platform</span>
+          <span class="tl"> </span>
+          <span class="tl tc">Spawning architect agents...</span>
+          <span class="tl ts">✓ Agent 1: Domain model designed</span>
+          <span class="tl ts">✓ Agent 2: API contract defined</span>
+          <span class="tl ts">✓ Agent 3: Infrastructure plan ready</span>
+          <span class="tl"> </span>
+          <span class="tl to">6 skill profiles generated</span>
+          <span class="tl tw">→ Scaffolding in clean state</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="yc">
+  <div class="wrap">
+    <div class="ycblock fade-up">
+      <div class="yctext">
+        <h2>Targeting<br />YC Summer 2026.</h2>
+        <p>We're building Agentic IDE to be the standard development platform for the agentic era. Looking for investors, advisors, and design partners who see where software development is going.</p>
+        <div class="ycact">
+          <a href="#waitlist" class="bp">Get Early Access →</a>
+          <a href="mailto:hello@aideapp.dev" class="bg">Talk to us</a>
+        </div>
+      </div>
+      <div class="ycbadge">
+        <span class="yclogo">YC</span>
+        <div class="yclbl">Applying to</div>
+        <div class="ycseason">Summer 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="waitlist" class="wsect">
+  <div class="wrap">
+    <div class="slabel">Early Access</div>
+    <h2 class="stitle fade-up">Stop paying the<br />tech debt tax.</h2>
+    <p class="ssub fade-up">Join engineering teams getting early access. We're onboarding selectively.</p>
+    <form class="wform fade-up" onsubmit="handleSubmit(event)">
+      <input type="email" class="winput" placeholder="your@email.com" required id="email-input" />
+      <button type="submit" class="bp">Join Waitlist →</button>
+    </form>
+    <p class="wnote">No spam. Early access invites sent in order of signup.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="flogo">Agentic IDE Inc.</div>
+  <div class="fright">aideapp.dev · © 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = '✓ You\'re on the list';
+    btn.style.background = '#4DFFA0';
+    btn.disabled = true;
+    document.getElementById('email-input').disabled = true;
+  }
+</script>
+</body>
+</html>
