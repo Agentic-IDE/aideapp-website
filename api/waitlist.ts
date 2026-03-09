@@ -1,4 +1,4 @@
-import { put, list } from '@vercel/blob'
+import { put, list, getDownloadUrl } from '@vercel/blob'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const BLOB_PATH = 'waitlist/emails.json'
@@ -11,13 +11,14 @@ interface WaitlistEntry {
 async function getEmails(): Promise<WaitlistEntry[]> {
   const { blobs } = await list({ prefix: BLOB_PATH })
   if (blobs.length === 0) return []
-  const res = await fetch(blobs[0].url)
+  const downloadUrl = await getDownloadUrl(blobs[0].url)
+  const res = await fetch(downloadUrl)
   return res.json()
 }
 
 async function saveEmails(entries: WaitlistEntry[]): Promise<void> {
   await put(BLOB_PATH, JSON.stringify(entries), {
-    access: 'public',
+    access: 'private',
     addRandomSuffix: false,
     contentType: 'application/json',
   })
