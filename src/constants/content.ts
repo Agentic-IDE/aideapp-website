@@ -219,8 +219,9 @@ export const YC = {
   title: 'Targeting\nYC Summer 2026.',
   description:
     "We're building Agentic IDE to be the standard development platform for the agentic era. Looking for investors, advisors, and design partners who see where software development is going.",
-  primaryCta: { label: 'Get Early Access →', href: '#waitlist' },
-  ghostCta: { label: 'Talk to us', href: 'mailto:hello@aideapp.dev' },
+  contactPlaceholder: 'Tell us about your use case (optional)',
+  contactButton: 'Send →',
+  contactSuccess: '✓ Message sent',
   badge: {
     logo: 'YC',
     label: 'Applying to',
