@@ -1,8 +1,18 @@
 import { NAV_LINKS } from '../../constants/content'
-import { useTypewriter } from '../../hooks/useTypewriter'
+import { useTypewriter, type Phrase } from '../../hooks/useTypewriter'
+
+const NAVBAR_PHRASES: Phrase[] = [
+  { text: 'Agentic IDE', displayMs: 20000 },
+  { text: 'Building the future', displayMs: 10000 },
+  { text: 'Augment your agents', displayMs: 10000 },
+  { text: 'Shipping at lightning speeds', displayMs: 10000 },
+  { text: 'Code with superpowers', displayMs: 10000 },
+  { text: 'Your AI pair programmer', displayMs: 10000 },
+  { text: 'Debug smarter, ship faster', displayMs: 10000 },
+]
 
 export function Navbar() {
-  const { displayText, isTyping } = useTypewriter('Agentic IDE')
+  const { displayText, isTyping } = useTypewriter(NAVBAR_PHRASES)
 
   return (
     <nav

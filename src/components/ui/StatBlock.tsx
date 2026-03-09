@@ -65,7 +65,7 @@ export function StatBlock({ stats }: StatBlockProps) {
     if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % stats.length)
-    }, 10000)
+    }, 18000)
   }, [stats.length])
 
   useEffect(() => {
