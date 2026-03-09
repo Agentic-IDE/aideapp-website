@@ -3,7 +3,7 @@ import { NAV_LINKS } from '../../constants/content'
 export function Navbar() {
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-100 flex items-center justify-end"
+      className="fixed top-0 left-0 right-0 z-100 flex items-center justify-between"
       style={{
         padding: '20px 48px',
         background: 'rgba(0, 0, 0, 0.9)',
@@ -11,6 +11,13 @@ export function Navbar() {
         borderBottom: '1px solid var(--border)',
       }}
     >
+      <a
+        href="#"
+        className="no-underline"
+        style={{ fontFamily: 'var(--fd)', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', color: 'var(--text)' }}
+      >
+        Agentic IDE
+      </a>
       <ul className="nav-links flex items-center gap-8 list-none">
         {NAV_LINKS.map((link) => (
           <li key={link.label}>
