@@ -1,8 +1,8 @@
 import type { NavLink, StatItem, ModeCardContent, TerminalLine, AnimatedTerminalLine } from '../types'
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Platform', href: '#modes' },
   { label: 'Mission', href: '#mission' },
+  { label: 'Platform', href: '#modes' },
   { label: 'YC S26', href: '#yc' },
   { label: 'Request Access', href: '#waitlist', cta: true },
 ]
