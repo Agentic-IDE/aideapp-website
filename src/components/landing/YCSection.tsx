@@ -2,11 +2,12 @@ import { YC } from '../../constants/content'
 import { Section } from '../layout/Section'
 import { useContactForm } from '../../hooks/useContactForm'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
+import { ContactOverlay } from './ContactOverlay'
 
 export function YCSection() {
   const ref = useIntersectionObserver()
-  const { email, setEmail, message, setMessage, submitted, loading, error, handleSubmit } =
-    useContactForm()
+  const { email, setEmail, message, setMessage, status, handleSubmit } = useContactForm()
+  const isDisabled = status === 'loading' || status === 'success'
 
   return (
     <Section id="yc">
@@ -14,6 +15,7 @@ export function YCSection() {
         ref={ref}
         className="fade-up yc-block"
         style={{
+          position: 'relative',
           background: 'var(--surface)',
           border: '1px solid var(--border)',
           borderRadius: 16,
@@ -24,6 +26,7 @@ export function YCSection() {
           gap: 48,
         }}
       >
+        <ContactOverlay status={status} />
         <div>
           <h2
             style={{
@@ -52,7 +55,7 @@ export function YCSection() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={submitted}
+              disabled={isDisabled}
               style={{
                 background: 'var(--dim)',
                 border: '1px solid var(--border)',
@@ -69,7 +72,7 @@ export function YCSection() {
               placeholder={YC.contactPlaceholder}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              disabled={submitted}
+              disabled={isDisabled}
               rows={3}
               style={{
                 background: 'var(--dim)',
@@ -86,7 +89,7 @@ export function YCSection() {
             />
             <button
               type="submit"
-              disabled={submitted || loading}
+              disabled={isDisabled}
               style={{
                 background: 'var(--accent)',
                 color: 'var(--bg)',
@@ -96,16 +99,13 @@ export function YCSection() {
                 fontFamily: 'var(--fd)',
                 fontSize: 14,
                 fontWeight: 700,
-                cursor: submitted ? 'default' : 'pointer',
+                cursor: isDisabled ? 'default' : 'pointer',
                 alignSelf: 'flex-start',
                 transition: 'transform 0.2s, opacity 0.2s',
               }}
             >
-              {submitted ? YC.contactSuccess : YC.contactButton}
+              {YC.contactButton}
             </button>
-            {error && (
-              <p style={{ fontSize: 12, color: '#FF4444', margin: 0 }}>{error}</p>
-            )}
           </form>
         </div>
         {/* YC Badge */}

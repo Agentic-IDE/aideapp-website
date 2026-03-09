@@ -1,27 +1,38 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { submitContact } from '../services/contact.service'
+
+export type ContactStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export function useContactForm() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState<ContactStatus>('idle')
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!email || submitted) return
-    setLoading(true)
-    setError(null)
+    if (!email || status === 'loading' || status === 'success') return
+    setStatus('loading')
     try {
       await submitContact({ email, message: message || undefined })
-      setSubmitted(true)
+      setStatus('success')
     } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+      setStatus('error')
     }
   }
 
-  return { email, setEmail, message, setMessage, submitted, loading, error, handleSubmit }
+  // Auto-reset after success/error
+  useEffect(() => {
+    if (status === 'success' || status === 'error') {
+      const timer = setTimeout(() => {
+        if (status === 'success') {
+          setEmail('')
+          setMessage('')
+        }
+        setStatus('idle')
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [status])
+
+  return { email, setEmail, message, setMessage, status, handleSubmit }
 }

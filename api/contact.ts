@@ -33,25 +33,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-      // Store in blob as backup
+      // Store in blob first (guaranteed persistence)
       const entries = await getMessages()
       entries.unshift({ email, message, created_at: new Date().toISOString() })
       await saveMessages(entries)
+    } catch (err) {
+      console.error('Blob storage error:', err)
+      return res.status(500).json({ success: false, message: 'Something went wrong' })
+    }
 
-      // Send email via Resend
+    // Attempt email via Resend (non-blocking — data is already saved)
+    try {
       const resend = new Resend(process.env.RESEND_API_KEY)
       await resend.emails.send({
-        from: 'Agentic IDE <contact@aideapp.dev>',
+        from: 'Agentic IDE <contact@send.aideapp.dev>',
         to: process.env.CONTACT_EMAIL!,
         subject: `New contact from ${email}`,
         text: `Email: ${email}\n${message ? `Message: ${message}` : '(No message)'}`,
       })
-
-      return res.status(200).json({ success: true, message: 'Message sent!' })
     } catch (err) {
-      console.error('Contact submit error:', err)
-      return res.status(500).json({ success: false, message: 'Something went wrong' })
+      console.error('Resend email error:', err)
+      // Don't fail the request — message is already stored in blob
     }
+
+    return res.status(200).json({ success: true, message: 'Message sent!' })
   }
 
   if (req.method === 'GET') {
