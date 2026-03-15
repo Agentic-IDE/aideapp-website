@@ -163,4 +163,8 @@ body::after {
   .carousel-arrow {
     display: none;
   }
+
+  .hero-supporters {
+    display: none !important;
+  }
 }
