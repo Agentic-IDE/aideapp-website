@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { PARTICLE_COLORS } from '../../constants/theme'
+import { getParticleColors } from '../../constants/theme'
 import type { ContactStatus } from '../../hooks/useContactForm'
 
 const PARTICLE_COUNT = 60
@@ -71,7 +71,7 @@ export function ContactOverlay({ status }: ContactOverlayProps) {
       speed: 1 + Math.random() * 3,
       size: 1.5 + Math.random() * 1.5,
       opacity: 0.15 + Math.random() * 0.4,
-      color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+      color: (() => { const c = getParticleColors(); return c[Math.floor(Math.random() * c.length)]; })(),
       sphereLat: Math.acos(2 * Math.random() - 1),
       sphereLon: Math.random() * Math.PI * 2,
     }))

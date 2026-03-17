@@ -1,6 +1,25 @@
 @import "tailwindcss";
 
 :root {
+  --bg: #FFFFFF;
+  --surface: #F5F5F5;
+  --surface2: #EEEEEE;
+  --border: #E0E0E0;
+  --accent: #000000;
+  --accent2: #000000;
+  --accent3: #000000;
+  --accent4: #000000;
+  --text: #111111;
+  --muted: #888888;
+  --dim: #E0E0E0;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --selection-bg: rgba(0, 0, 0, 0.12);
+  --rain-fade: rgba(255, 255, 255, 0.08);
+  --fd: 'Space Grotesk', sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+}
+
+html.dark {
   --bg: #000000;
   --surface: #0A0A0A;
   --surface2: #111111;
@@ -12,8 +31,9 @@
   --text: #FFFFFF;
   --muted: #666666;
   --dim: #1A1A1A;
-  --fd: 'Space Grotesk', sans-serif;
-  --fm: 'JetBrains Mono', monospace;
+  --nav-bg: rgba(0, 0, 0, 0.9);
+  --selection-bg: rgba(255, 255, 255, 0.15);
+  --rain-fade: rgba(0, 0, 0, 0.08);
 }
 
 *, *::before, *::after {
@@ -69,7 +89,7 @@ body::after {
 
 /* Selection */
 ::selection {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--selection-bg);
   color: var(--text);
 }
 

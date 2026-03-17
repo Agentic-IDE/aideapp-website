@@ -1,18 +1,19 @@
 import { useEffect, useRef } from 'react'
-import { PARTICLE_COLORS } from '../../constants/theme'
+import { getParticleColors } from '../../constants/theme'
 import type { RainDrop } from '../../types'
 
 const SLANT_ANGLE = 15 * (Math.PI / 180)
 const SLANT_DX = Math.tan(SLANT_ANGLE)
 
 function createDrop(width: number, height: number, randomY = false): RainDrop {
+  const colors = getParticleColors()
   return {
     x: Math.random() * (width + height * SLANT_DX) - height * SLANT_DX,
     y: randomY ? Math.random() * height : -Math.random() * 20,
     size: 1.5 + Math.random() * 1.5,
     speed: 0.4 + Math.random() * 1.8,
     opacity: 0.08 + Math.random() * 0.3,
-    color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+    color: colors[Math.floor(Math.random() * colors.length)],
   }
 }
 
@@ -56,7 +57,7 @@ export function PixelRain({ initialDrops }: PixelRainProps) {
       const h = canvas!.height
 
       // Fade trail with site bg color
-      ctx!.fillStyle = 'rgba(0, 0, 0, 0.08)'
+      ctx!.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--rain-fade').trim() || 'rgba(0, 0, 0, 0.08)'
       ctx!.fillRect(0, 0, w, h)
 
       for (let i = 0; i < drops.length; i++) {

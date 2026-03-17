@@ -23,3 +23,15 @@ export const PARTICLE_COLORS = [
   'rgba(160, 160, 160,',  // medium grey
   'rgba(120, 120, 120,',  // dim grey
 ]
+
+const PARTICLE_COLORS_LIGHT = [
+  'rgba(0, 0, 0,',
+  'rgba(60, 60, 60,',
+  'rgba(100, 100, 100,',
+  'rgba(140, 140, 140,',
+]
+
+export function getParticleColors(): string[] {
+  const isDark = document.documentElement.classList.contains('dark')
+  return isDark ? PARTICLE_COLORS : PARTICLE_COLORS_LIGHT
+}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { PARTICLE_COLORS } from '../../constants/theme'
+import { getParticleColors } from '../../constants/theme'
 import type { RainDrop, Particle, Phase } from '../../types'
 
 const PARTICLE_COUNT = 120
@@ -8,7 +8,9 @@ const CONVERGE_DURATION = 2000
 const PLANET_MIN_DURATION = 1500
 const DISPERSE_DURATION = 1200
 
-const BG = '#000000'
+function getBg() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#000000'
+}
 
 interface LoadingScreenProps {
   onComplete: (drops: RainDrop[]) => void
@@ -48,7 +50,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       speed: 1 + Math.random() * 3,
       size: 1.5 + Math.random() * 1.5,
       opacity: 0.15 + Math.random() * 0.4,
-      color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+      color: (() => { const c = getParticleColors(); return c[Math.floor(Math.random() * c.length)]; })(),
       sphereLat: Math.acos(2 * Math.random() - 1),
       sphereLon: Math.random() * Math.PI * 2,
       tx: 0,
@@ -78,11 +80,13 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       if (phase === 'disperse') {
         const t = Math.min(elapsed / DISPERSE_DURATION, 1)
         const alpha = 1 - t * t
-        ctx!.fillStyle = `rgba(0, 0, 0, ${alpha})`
+        ctx!.globalAlpha = alpha
+        ctx!.fillStyle = getBg()
         ctx!.fillRect(0, 0, w, h)
+        ctx!.globalAlpha = 1
         setBgOpacity(alpha)
       } else {
-        ctx!.fillStyle = BG
+        ctx!.fillStyle = getBg()
         ctx!.fillRect(0, 0, w, h)
       }
 
@@ -198,7 +202,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        backgroundColor: `rgba(0, 0, 0, ${bgOpacity})`,
+        backgroundColor: `color-mix(in srgb, var(--bg) ${Math.round(bgOpacity * 100)}%, transparent)`,
         pointerEvents: bgOpacity < 0.1 ? 'none' : 'auto',
         transition: 'background-color 100ms',
       }}
