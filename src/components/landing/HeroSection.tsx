@@ -1,7 +1,22 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { HERO } from '../../constants/content'
 import { Button } from '../ui/Button'
 import { HeroIdeMockup } from './HeroIdeMockup'
+
+type Platform = 'mac' | 'windows' | 'linux'
+
+const PLATFORM_LABELS: Record<Platform, string> = {
+  mac: 'macOS',
+  windows: 'Windows',
+  linux: 'Linux',
+}
+
+function detectPlatform(): Platform {
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('win')) return 'windows'
+  if (ua.includes('linux')) return 'linux'
+  return 'mac'
+}
 const SUPPORTERS = [
   { name: 'Microsoft for Startups', logo: '/microsoft-for-startups-badge.png' },
 ]
@@ -97,6 +112,67 @@ function SupporterSlideshow() {
   )
 }
 
+function DownloadButtons() {
+  const platform = useMemo(() => detectPlatform(), [])
+  const otherPlatforms = (['mac', 'windows', 'linux'] as Platform[]).filter((p) => p !== platform)
+  const [downloadCount, setDownloadCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/downloads')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.total > 100) setDownloadCount(data.total)
+      })
+      .catch(() => {})
+  }, [])
+
+  return (
+    <div style={{ animation: 'fu 0.6s 0.3s ease both' }}>
+      <div className="flex gap-4 flex-wrap items-center">
+        <Button href={`/api/download?platform=${platform}`}>
+          Download for {PLATFORM_LABELS[platform]}
+        </Button>
+        <Button variant="ghost" href={HERO.ghostCta.href}>{HERO.ghostCta.label}</Button>
+        {downloadCount !== null && (
+          <span
+            style={{
+              fontSize: 13,
+              color: 'var(--muted)',
+              fontFamily: 'var(--fm)',
+            }}
+          >
+            {downloadCount.toLocaleString()} downloads
+          </span>
+        )}
+      </div>
+      <p
+        style={{
+          marginTop: 12,
+          fontSize: 12,
+          color: 'var(--muted)',
+        }}
+      >
+        Also available for{' '}
+        {otherPlatforms.map((p, i) => (
+          <span key={p}>
+            {i > 0 && ' · '}
+            <a
+              href={`/api/download?platform=${p}`}
+              style={{
+                color: 'var(--muted)',
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+              }}
+            >
+              {PLATFORM_LABELS[p]}
+            </a>
+          </span>
+        ))}
+      </p>
+    </div>
+  )
+}
+
 export function HeroSection() {
   return (
     <div
@@ -159,13 +235,7 @@ export function HeroSection() {
           >
             Built for devs, by devs.
           </p>
-          <div
-            className="flex gap-4 flex-wrap"
-            style={{ animation: 'fu 0.6s 0.3s ease both' }}
-          >
-            <Button href={HERO.primaryCta.href}>{HERO.primaryCta.label}</Button>
-            <Button variant="ghost" href={HERO.ghostCta.href}>{HERO.ghostCta.label}</Button>
-          </div>
+          <DownloadButtons />
         </div>
 
         {/* Right: Supported by logos */}

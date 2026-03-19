@@ -3,7 +3,7 @@ import type { NavLink, StatItem, ModeCardContent, TerminalLine, AnimatedTerminal
 export const NAV_LINKS: NavLink[] = [
   { label: 'Mission', href: '#mission' },
   { label: 'Platform', href: '#modes' },
-  { label: 'Request Access', href: '#cta', cta: true },
+  { label: 'Download', href: '#', cta: true },
 ]
 
 export const HERO = {
@@ -214,21 +214,6 @@ export const MODE_CARDS: ModeCardContent[] = [
   },
 ]
 
-export const CTA = {
-  label: 'Early Access',
-  title: 'Stop paying the\ntech debt tax.',
-  subtitle: "Join engineering teams getting early access. We're onboarding selectively.",
-  debtItems: [
-    'AI generates code 40% faster — and 1.7x more defects',
-    'Copy-paste suggestions replace proper abstractions',
-    'Test coverage drops, so refactors become risky',
-    'Each shortcut makes the next feature slower to ship',
-    'Within a year, teams spend more time maintaining than building',
-  ],
-  contactPlaceholder: 'Tell us about your use case (optional)',
-  buttonLabel: 'Request Access →',
-  note: 'No spam. Early access invites sent in order of signup.',
-}
 
 export const FOOTER = {
   company: 'Agentic IDE Inc.',

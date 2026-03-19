@@ -1,0 +1,105 @@
+# =============================================================================
+# AIDE Release Pipeline — REFERENCE FILE
+# Copy this to the ClaudeOrganizer repo at .github/workflows/release.yml
+#
+# Prerequisites (one-time Azure setup):
+#   1. Create a storage account in Azure Portal (Founders Hub credits)
+#   2. Create a container named "releases" with public blob access
+#   3. Create an Azure CDN profile pointing to the storage account
+#   4. Set AZURE_CDN_BASE_URL in Vercel env vars to the CDN endpoint URL
+#   5. Set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY as GitHub secrets
+# =============================================================================
+
+name: Build & Release AIDE
+
+on:
+  push:
+    branches:
+      - production-free
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # -----------------------------------------------------------------------
+      # BUILD STEP — Replace these with your actual build commands
+      # For Tauri apps, this would be something like:
+      #   npx tauri build --target <platform>
+      # For Electron:
+      #   npx electron-builder --mac --win --linux
+      #
+      # The build should produce these artifacts:
+      #   AIDE-<version>-mac.dmg
+      #   AIDE-<version>-windows.exe
+      #   AIDE-<version>-linux.AppImage
+      # -----------------------------------------------------------------------
+      - name: Build for all platforms
+        run: |
+          echo "TODO: Replace with actual build commands"
+          echo "Expected outputs:"
+          echo "  AIDE-${{ steps.version.outputs.version }}-mac.dmg"
+          echo "  AIDE-${{ steps.version.outputs.version }}-windows.exe"
+          echo "  AIDE-${{ steps.version.outputs.version }}-linux.AppImage"
+
+      # -----------------------------------------------------------------------
+      # UPLOAD TO AZURE BLOB STORAGE
+      # -----------------------------------------------------------------------
+      - name: Upload artifacts to Azure Blob Storage
+        env:
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Upload each platform artifact
+          for file in \
+            "AIDE-${VERSION}-mac.dmg" \
+            "AIDE-${VERSION}-windows.exe" \
+            "AIDE-${VERSION}-linux.AppImage"; do
+
+            if [ -f "$file" ]; then
+              az storage blob upload \
+                --account-name "$AZURE_STORAGE_ACCOUNT" \
+                --account-key "$AZURE_STORAGE_KEY" \
+                --container-name releases \
+                --name "$file" \
+                --file "$file" \
+                --content-cache-control "public, max-age=31536000" \
+                --overwrite
+              echo "Uploaded $file"
+            else
+              echo "Warning: $file not found, skipping"
+            fi
+          done
+
+      # -----------------------------------------------------------------------
+      # CREATE GITHUB RELEASE (metadata only — no file assets)
+      # -----------------------------------------------------------------------
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          gh release create "v${VERSION}" \
+            --title "AIDE v${VERSION}" \
+            --generate-notes \
+            --latest

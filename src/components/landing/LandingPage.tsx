@@ -4,7 +4,6 @@ import { HeroSection } from './HeroSection'
 import { MissionSection } from './MissionSection'
 import { ModesSection } from './ModesSection'
 import { PartnersSection } from './PartnersSection'
-import { YCSection } from './YCSection'
 
 export function LandingPage() {
   return (
@@ -14,7 +13,6 @@ export function LandingPage() {
       <MissionSection />
       <ModesSection />
       <PartnersSection />
-      <YCSection />
       <Footer />
     </>
   )

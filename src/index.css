@@ -54,20 +54,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Grid overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.22;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
