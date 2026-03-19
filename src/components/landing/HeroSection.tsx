@@ -169,6 +169,19 @@ function DownloadButtons() {
           </span>
         ))}
       </p>
+      <p
+        style={{
+          marginTop: 8,
+          fontSize: 11,
+          color: 'var(--muted)',
+          opacity: 0.7,
+        }}
+      >
+        By downloading, you agree to our{' '}
+        <a href="/terms" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>Terms of Service</a>,{' '}
+        <a href="/privacy" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>Privacy Policy</a>, and{' '}
+        <a href="/eula" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>EULA</a>.
+      </p>
     </div>
   )
 }
