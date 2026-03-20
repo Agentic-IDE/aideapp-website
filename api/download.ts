@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createHash } from 'crypto'
 
 const RELEASE_TAG = 'free-v0.3.2'
-const RELEASE_BASE = 'https://aideappstorage.blob.core.windows.net/releases'
+const RELEASE_BASE = process.env.DOWNLOAD_BASE_URL || ''
 
 const VALID_PLATFORMS = ['mac', 'windows', 'linux'] as const
 type Platform = (typeof VALID_PLATFORMS)[number]
