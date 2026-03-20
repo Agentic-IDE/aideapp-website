@@ -1,12 +1,11 @@
 import { createHmac, createHash } from 'crypto'
-import { getCachedRelease, getCachedFreeRelease, cacheFreeRelease, type CachedRelease } from './releases'
+import { getCachedRelease, getCachedFreeRelease } from './releases'
 
 // --- Environment ---
 
 const AZURE_CDN_BASE_URL = process.env.AZURE_CDN_BASE_URL || ''
 const UPDATE_SECRET = process.env.UPDATE_SECRET || ''
-const GITHUB_TOKEN = process.env.FREE_READER_TOKEN || ''
-const GITHUB_REPO = 'Agentic-IDE/AgenticIDE-AIDE-'
+const FALLBACK_FREE_VERSION = '0.3.2'
 
 // --- Constants ---
 
@@ -37,35 +36,8 @@ export async function getLatestFreeRelease(): Promise<ReleaseInfo> {
   const cached = await getCachedFreeRelease()
   if (cached) return cached
 
-  // Fallback: fetch directly from GitHub API and cache
-  if (!GITHUB_TOKEN) throw new Error('No cached free release and no GitHub token configured')
-
-  const headers: Record<string, string> = {
-    Authorization: `token ${GITHUB_TOKEN}`,
-    Accept: 'application/vnd.github.v3+json',
-  }
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`, { headers })
-  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
-
-  const releases = await res.json() as Array<{ tag_name: string; body: string; published_at: string; assets: Array<{ name: string; browser_download_url: string }> }>
-  const freeRelease = releases.find((r) => r.tag_name.startsWith('free-v'))
-  if (!freeRelease) throw new Error('No free-v* release found on GitHub')
-
-  const cdnBase = AZURE_CDN_BASE_URL
-  const data: CachedRelease = {
-    tag: freeRelease.tag_name.replace(/^free-v/, ''),
-    notes: freeRelease.body || '',
-    assets: freeRelease.assets.map((a) => ({
-      name: a.name,
-      url: cdnBase ? `${cdnBase}/${a.name}` : a.browser_download_url,
-    })),
-    published_at: freeRelease.published_at,
-  }
-
-  // Cache for next time (best-effort)
-  cacheFreeRelease(data).catch(() => {})
-
-  return data
+  // Fallback: return hardcoded latest version so downloads work without blob/webhook
+  return { tag: FALLBACK_FREE_VERSION, notes: '', assets: [] }
 }
 
 // --- Download URL construction ---
