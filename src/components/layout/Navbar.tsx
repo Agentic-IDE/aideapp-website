@@ -61,7 +61,7 @@ export function Navbar() {
       }}
     >
       <a
-        href="#"
+        href="/"
         className="no-underline"
         style={{
           fontFamily: 'var(--fm)',

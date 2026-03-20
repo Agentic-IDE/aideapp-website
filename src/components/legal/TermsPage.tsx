@@ -53,7 +53,7 @@ export function TermsPage() {
         <p style={pStyle}>We reserve the right to modify these Terms at any time. Changes will be posted on this page. Continued use of the Service after changes constitutes acceptance of the revised Terms.</p>
 
         <h2 style={h2Style}>13. Contact</h2>
-        <p style={pStyle}>For questions about these Terms, contact us at <a href="mailto:legal@aideapp.dev" style={{ color: 'var(--text)', textDecoration: 'underline' }}>legal@aideapp.dev</a>.</p>
+        <p style={pStyle}>For questions about these Terms, reach out via <a href="/contact" style={{ color: 'var(--text)', textDecoration: 'underline' }}>our contact page</a>.</p>
       </div>
       <Footer />
     </>

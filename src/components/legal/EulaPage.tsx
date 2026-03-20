@@ -44,7 +44,7 @@ export function EulaPage() {
         <p style={pStyle}>This EULA shall be governed by and construed in accordance with the laws of the State of California, United States, without regard to its conflict of law provisions.</p>
 
         <h2 style={h2Style}>10. Contact</h2>
-        <p style={pStyle}>For questions about this EULA, contact us at <a href="mailto:legal@aideapp.dev" style={{ color: 'var(--text)', textDecoration: 'underline' }}>legal@aideapp.dev</a>.</p>
+        <p style={pStyle}>For questions about this EULA, reach out via <a href="/contact" style={{ color: 'var(--text)', textDecoration: 'underline' }}>our contact page</a>.</p>
       </div>
       <Footer />
     </>

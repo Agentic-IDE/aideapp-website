@@ -63,7 +63,7 @@ export function PrivacyPage() {
         <p style={pStyle}>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated revision date. Continued use of the Software after changes constitutes acceptance of the revised policy.</p>
 
         <h2 style={h2Style}>Contact</h2>
-        <p style={pStyle}>For privacy-related questions, contact us at <a href="mailto:privacy@aideapp.dev" style={{ color: 'var(--text)', textDecoration: 'underline' }}>privacy@aideapp.dev</a>.</p>
+        <p style={pStyle}>For privacy-related questions, reach out via <a href="/contact" style={{ color: 'var(--text)', textDecoration: 'underline' }}>our contact page</a>.</p>
       </div>
       <Footer />
     </>

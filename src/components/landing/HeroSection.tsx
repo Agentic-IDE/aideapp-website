@@ -128,6 +128,17 @@ function DownloadButtons() {
 
   return (
     <div style={{ animation: 'fu 0.6s 0.3s ease both' }}>
+      <p
+        style={{
+          fontSize: 11,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'var(--muted)',
+          marginBottom: 12,
+        }}
+      >
+        Free early demo
+      </p>
       <div className="flex gap-4 flex-wrap items-center">
         <Button href={`/api/download?platform=${platform}`}>
           Download for {PLATFORM_LABELS[platform]}
@@ -182,6 +193,26 @@ function DownloadButtons() {
         <a href="/privacy" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>Privacy Policy</a>, and{' '}
         <a href="/eula" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>EULA</a>.
       </p>
+      {platform === 'mac' && (
+        <p
+          style={{
+            marginTop: 12,
+            fontSize: 12,
+            color: 'var(--muted)',
+            lineHeight: 1.6,
+            padding: '10px 12px',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            maxWidth: 540,
+          }}
+        >
+          <strong style={{ color: 'var(--text)' }}>macOS note:</strong>{' '}
+          macOS may block the app since it's not from the App Store. To fix this, go to{' '}
+          <span style={{ fontFamily: 'var(--fm)' }}>System Settings → Privacy & Security</span>, scroll to "Security", and click{' '}
+          <strong>"Open Anyway"</strong>.
+        </p>
+      )}
     </div>
   )
 }
