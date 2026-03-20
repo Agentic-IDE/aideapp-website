@@ -1,16 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createHash } from 'crypto'
 
-const RELEASE_TAG = 'free-v0.3.2'
+const RELEASE_TAG = 'free-v0.3.3'
 const RELEASE_BASE = process.env.DOWNLOAD_BASE_URL || ''
 
 const VALID_PLATFORMS = ['mac', 'windows', 'linux'] as const
 type Platform = (typeof VALID_PLATFORMS)[number]
 
 const PLATFORM_ASSETS: Record<Platform, string> = {
-  mac: 'Agentic.IDE_0.1.6_universal.dmg',
-  windows: 'Agentic.IDE_0.1.6_x64-setup.exe',
-  linux: 'Agentic.IDE_0.1.6_amd64.AppImage',
+  mac: 'Agentic.IDE_0.3.3_universal.dmg',
+  windows: 'Agentic.IDE_0.3.3_x64-setup.exe',
+  linux: 'Agentic.IDE_0.3.3_amd64.AppImage',
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
