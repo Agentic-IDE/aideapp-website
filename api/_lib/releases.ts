@@ -11,12 +11,16 @@ export interface CachedRelease {
 }
 
 async function readBlob(path: string): Promise<CachedRelease | null> {
-  const { blobs } = await list({ prefix: path })
-  if (blobs.length === 0) return null
-  const url = await getDownloadUrl(blobs[0].url)
-  const res = await fetch(url)
-  if (!res.ok) return null
-  return res.json()
+  try {
+    const { blobs } = await list({ prefix: path })
+    if (blobs.length === 0) return null
+    const url = await getDownloadUrl(blobs[0].url)
+    const res = await fetch(url)
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
+  }
 }
 
 async function writeBlob(path: string, data: CachedRelease): Promise<void> {
