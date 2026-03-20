@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { isValidPlatform, getLatestRelease, getDownloadUrl, hashIp } from './_lib/github'
+import { isValidPlatform, getLatestFreeRelease, getDownloadUrl, hashIp } from './_lib/github'
 import { incrementDownload } from './_lib/downloads'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -14,7 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const release = await getLatestRelease()
+    const release = await getLatestFreeRelease()
     const url = getDownloadUrl(platform, release.tag, release.assets)
 
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown'
