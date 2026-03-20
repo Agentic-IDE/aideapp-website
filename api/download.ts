@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createHash } from 'crypto'
 
 const RELEASE_TAG = 'free-v0.3.2'
-const RELEASE_BASE = `https://github.com/Agentic-IDE/AgenticIDE-AIDE-/releases/download/${RELEASE_TAG}`
+const RELEASE_BASE = 'https://aideappstorage.blob.core.windows.net/releases'
 
 const VALID_PLATFORMS = ['mac', 'windows', 'linux'] as const
 type Platform = (typeof VALID_PLATFORMS)[number]
