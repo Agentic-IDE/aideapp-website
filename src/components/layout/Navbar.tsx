@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NAV_LINKS } from '../../constants/content'
 import { useTypewriter, type Phrase } from '../../hooks/useTypewriter'
+import { getAuthSession, clearAuthSession, truncateEmail } from '../../services/auth'
 
 const NAVBAR_PHRASES: Phrase[] = [
   { text: 'Agentic IDE', displayMs: 5000 },
@@ -49,6 +50,11 @@ function ThemeToggle() {
 
 export function Navbar() {
   const { displayText, isTyping } = useTypewriter(NAVBAR_PHRASES)
+  const [session, setSession] = useState(getAuthSession())
+
+  useEffect(() => {
+    setSession(getAuthSession())
+  }, [])
 
   return (
     <nav
@@ -111,6 +117,42 @@ export function Navbar() {
             </li>
           ))}
         </ul>
+        {session ? (
+          <div className="flex items-center gap-3">
+            <span style={{ fontSize: 11, color: 'var(--muted)', letterSpacing: '0.03em' }}>
+              {truncateEmail(session.email)}
+            </span>
+            <button
+              onClick={() => { clearAuthSession(); setSession(null) }}
+              style={{
+                background: 'none',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                padding: '6px 14px',
+                cursor: 'pointer',
+                color: 'var(--muted)',
+                fontSize: 11,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <a
+            href="/login"
+            className="no-underline transition-colors"
+            style={{
+              color: 'var(--muted)',
+              fontSize: 12,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Sign In
+          </a>
+        )}
         <ThemeToggle />
       </div>
     </nav>
