@@ -193,7 +193,7 @@ function DownloadButtons() {
         <a href="/privacy" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>Privacy Policy</a>, and{' '}
         <a href="/eula" style={{ color: 'var(--muted)', textDecoration: 'underline', textUnderlineOffset: 3 }}>EULA</a>.
       </p>
-      {platform === 'mac' && (
+      {platform === 'windows' && (
         <p
           style={{
             marginTop: 12,
@@ -207,10 +207,9 @@ function DownloadButtons() {
             maxWidth: 540,
           }}
         >
-          <strong style={{ color: 'var(--text)' }}>macOS note:</strong>{' '}
-          macOS may block the app since it's not from the App Store. To fix this, go to{' '}
-          <span style={{ fontFamily: 'var(--fm)' }}>System Settings → Privacy & Security</span>, scroll to "Security", and click{' '}
-          <strong>"Open Anyway"</strong>.
+          <strong style={{ color: 'var(--text)' }}>Windows note:</strong>{' '}
+          Windows SmartScreen may show a warning since our code signing certificate is being processed.
+          Click <strong>"More info"</strong> then <strong>"Run anyway"</strong> to proceed.
         </p>
       )}
     </div>
