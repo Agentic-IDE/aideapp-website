@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createHash } from 'crypto'
 import { put, list } from '@vercel/blob'
 
-const RELEASE_TAG = 'free-v0.4.0'
+const RELEASE_TAG = 'free-v0.4.3'
 const RELEASE_BASE = process.env.DOWNLOAD_BASE_URL || ''
 const BLOB_PATH = 'downloads/count.json'
 
@@ -10,9 +10,9 @@ const VALID_PLATFORMS = ['mac', 'windows', 'linux'] as const
 type Platform = (typeof VALID_PLATFORMS)[number]
 
 const PLATFORM_ASSETS: Record<Platform, string> = {
-  mac: 'Agentic.IDE_0.4.0_universal.dmg',
-  windows: 'Agentic.IDE_0.4.0_x64-setup.exe',
-  linux: 'Agentic.IDE_0.4.0_amd64.AppImage',
+  mac: 'Agentic.IDE_0.4.3_universal.dmg',
+  windows: 'Agentic.IDE_0.4.3_x64-setup.exe',
+  linux: 'Agentic.IDE_0.4.3_amd64.AppImage',
 }
 
 interface DownloadCounts {
