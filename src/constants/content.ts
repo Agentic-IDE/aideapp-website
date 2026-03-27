@@ -3,6 +3,7 @@ import type { NavLink, StatItem, ModeCardContent, TerminalLine, AnimatedTerminal
 export const NAV_LINKS: NavLink[] = [
   { label: 'Mission', href: '#mission' },
   { label: 'Platform', href: '#modes' },
+  { label: 'Changelog', href: '/changelog' },
   { label: 'Download', href: '#', cta: true },
 ]
 
