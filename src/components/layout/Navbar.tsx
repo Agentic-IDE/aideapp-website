@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { NAV_LINKS } from '../../constants/content'
 import { useTypewriter, type Phrase } from '../../hooks/useTypewriter'
 import { getAuthSession, clearAuthSession, truncateEmail } from '../../services/auth'
@@ -51,6 +52,8 @@ function ThemeToggle() {
 export function Navbar() {
   const { displayText, isTyping } = useTypewriter(NAVBAR_PHRASES)
   const [session, setSession] = useState(getAuthSession())
+  const location = useLocation()
+  const isLandingPage = location.pathname === '/'
 
   useEffect(() => {
     setSession(getAuthSession())
@@ -92,7 +95,7 @@ export function Navbar() {
       </a>
       <div className="flex items-center gap-6">
         <ul className="nav-links flex items-center gap-8 list-none">
-          {NAV_LINKS.map((link) => (
+          {NAV_LINKS.filter(link => isLandingPage || !link.href.startsWith('#')).map((link) => (
             <li key={link.label}>
               <a
                 href={link.href}

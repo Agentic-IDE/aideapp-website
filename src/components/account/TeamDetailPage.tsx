@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Navbar } from '../layout/Navbar'
-import { getAuthSession, clearAuthSession } from '../../services/auth'
+import { getAuthSession } from '../../services/auth'
 import { useToast } from '../ui/Toast'
 
 const API_BASE = import.meta.env.VITE_CLOUD_API_URL || import.meta.env.VITE_API_URL || 'http://localhost:3002'
