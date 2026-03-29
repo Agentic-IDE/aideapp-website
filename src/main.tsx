@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { ToastProvider } from './components/ui/Toast'
 import './index.css'
 
 // Initialize theme before render to prevent flash
@@ -13,7 +14,9 @@ if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dar
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <ToastProvider>
+        <App />
+      </ToastProvider>
     </BrowserRouter>
   </StrictMode>,
 )

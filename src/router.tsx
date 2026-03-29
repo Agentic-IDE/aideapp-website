@@ -8,6 +8,9 @@ import { ChangelogPage } from './components/changelog/ChangelogPage'
 import { AuthPage } from './components/auth/AuthPage'
 import { AuthCallback } from './components/auth/AuthCallback'
 import { AccountPage } from './components/account/AccountPage'
+import { TeamDetailPage } from './components/account/TeamDetailPage'
+import { OrgDetailPage } from './components/account/OrgDetailPage'
+import { InviteAcceptPage } from './components/account/InviteAcceptPage'
 
 export function AppRoutes() {
   return (
@@ -17,6 +20,9 @@ export function AppRoutes() {
       <Route path="/signup" element={<AuthPage initialMode="signup" />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/account" element={<AccountPage />} />
+      <Route path="/account/team/:id" element={<TeamDetailPage />} />
+      <Route path="/account/org/:id" element={<OrgDetailPage />} />
+      <Route path="/invite/accept" element={<InviteAcceptPage />} />
       <Route path="/eula" element={<EulaPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />

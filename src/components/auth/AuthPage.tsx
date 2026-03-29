@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Navbar } from '../layout/Navbar'
 import { setAuthCookie } from '../../services/auth'
 
@@ -16,6 +16,8 @@ export function AuthPage({ initialMode = 'login' }: { initialMode?: Mode }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = searchParams.get('redirect')
 
   const reset = () => { setError(''); setSuccess(''); setPassword(''); setConfirm('') }
 
@@ -44,7 +46,7 @@ export function AuthPage({ initialMode = 'login' }: { initialMode?: Mode }) {
       // Store session in cookie and redirect to home
       setAuthCookie(data.user.email, data.token, data.user.id)
       setSuccess(mode === 'signup' ? 'Account created!' : 'Signed in!')
-      setTimeout(() => navigate('/'), 500)
+      setTimeout(() => navigate(redirectTo || '/'), 500)
     } catch {
       setError('Network error. Please try again.')
     } finally {
