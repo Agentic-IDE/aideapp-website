@@ -200,12 +200,17 @@ export function AccountPage() {
                 <span style={labelStyle}>Email</span>
                 <span style={valueStyle}>{profile.email}</span>
                 <span style={labelStyle}>Tier</span>
-                <span style={{
-                  fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
-                  background: profile.tier === 'free' ? 'var(--surface2)' : 'var(--accent)',
-                  color: profile.tier === 'free' ? 'var(--muted)' : 'var(--bg)',
-                  textTransform: 'uppercase', letterSpacing: '0.05em', width: 'fit-content',
-                }}>{profile.tier}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{
+                    fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
+                    background: profile.tier === 'free' ? 'var(--surface2)' : 'var(--accent)',
+                    color: profile.tier === 'free' ? 'var(--muted)' : 'var(--bg)',
+                    textTransform: 'uppercase', letterSpacing: '0.05em', width: 'fit-content',
+                  }}>{profile.tier}</span>
+                  {profile.tier === 'free' && (
+                    <a href="/pricing" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none' }}>Upgrade</a>
+                  )}
+                </div>
                 <span style={labelStyle}>Since</span>
                 <span style={valueStyle}>{formatDate(profile.created_at)}</span>
               </div>

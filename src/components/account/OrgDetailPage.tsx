@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { Navbar } from '../layout/Navbar'
 import { getAuthSession } from '../../services/auth'
 import { useToast } from '../ui/Toast'
+import { getSubscription, openBillingPortal, formatTierName, tierColor, type SubscriptionInfo } from '../../services/billing'
 
 const API_BASE = import.meta.env.VITE_CLOUD_API_URL || import.meta.env.VITE_API_URL || 'http://localhost:3002'
 
@@ -29,10 +30,20 @@ export function OrgDetailPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
   const [newTeamName, setNewTeamName] = useState('')
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [searchParams] = useSearchParams()
 
   const isAdmin = org?.your_role === 'admin'
+
+  // Show billing success toast
+  useEffect(() => {
+    if (searchParams.get('billing') === 'success') {
+      showToast('Subscription activated!', 'success')
+      window.history.replaceState({}, '', `/account/org/${id}`)
+    }
+  }, [searchParams])
 
   const fetchAll = async () => {
     if (!session || !id) { navigate('/login'); return }
@@ -50,6 +61,10 @@ export function OrgDetailPage() {
 
       const invRes = await fetch(`${API_BASE}/v1/orgs/${id}/invitations`, { headers })
       if (invRes.ok) setPendingInvites(await invRes.json())
+
+      // Fetch subscription status
+      const sub = await getSubscription(session.token, id)
+      if (sub) setSubscription(sub)
     } catch { showToast('Failed to load organization', 'error') }
     finally { setLoading(false) }
   }
@@ -141,6 +156,72 @@ export function OrgDetailPage() {
                 <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 4, border: '1px solid var(--border)', color: 'var(--muted)', textTransform: 'uppercase' }}>{org.your_role}</span>
               </div>
               <p style={{ fontSize: 13, color: 'var(--muted)', margin: '8px 0 0' }}>{org.member_count} member{org.member_count !== 1 ? 's' : ''}</p>
+            </div>
+
+            {/* Subscription */}
+            <div style={cardStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h3 style={{ fontFamily: 'var(--fd)', fontWeight: 600, fontSize: 16, color: 'var(--text)', margin: 0 }}>Subscription</h3>
+                {subscription && (
+                  <span style={{
+                    fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
+                    ...tierColor(subscription.tier), textTransform: 'uppercase', letterSpacing: '0.05em',
+                  }}>
+                    {formatTierName(subscription.tier)}
+                  </span>
+                )}
+              </div>
+
+              {subscription?.status === 'past_due' && (
+                <div style={{ padding: '8px 12px', borderRadius: 6, background: '#ef44441a', border: '1px solid #ef4444', color: '#ef4444', fontSize: 12, marginBottom: 12 }}>
+                  Payment failed. Please update your billing information.
+                </div>
+              )}
+
+              {subscription?.status === 'trialing' && subscription.trial_end && (
+                <p style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 500, margin: '0 0 8px' }}>
+                  Free trial ends {new Date(subscription.trial_end).toLocaleDateString()}
+                </p>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+                <div>
+                  <span style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Seats</span>
+                  <p style={{ fontSize: 14, color: 'var(--text)', margin: '2px 0 0', fontWeight: 500 }}>
+                    {subscription?.seat_count || members.length} / {subscription?.seat_limit === 9999 ? 'Unlimited' : subscription?.seat_limit || 1}
+                  </p>
+                </div>
+                {subscription?.current_period_end && (
+                  <div>
+                    <span style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Renews</span>
+                    <p style={{ fontSize: 14, color: 'var(--text)', margin: '2px 0 0', fontWeight: 500 }}>
+                      {new Date(subscription.current_period_end).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                {subscription && subscription.tier !== 'basic' && isAdmin && (
+                  <button
+                    onClick={() => session && id && openBillingPortal(session.token, id).catch(e => showToast(e.message, 'error'))}
+                    style={smallBtnStyle}
+                  >
+                    Manage Billing
+                  </button>
+                )}
+                {(!subscription || subscription.tier === 'basic') && (
+                  <Link to="/pricing" style={{ ...smallBtnStyle, textDecoration: 'none', textAlign: 'center' }}>
+                    Upgrade
+                  </Link>
+                )}
+              </div>
+
+              {subscription?.cancel_at_period_end && (
+                <p style={{ fontSize: 11, color: '#f59e0b', margin: '8px 0 0' }}>
+                  Cancels at end of billing period
+                </p>
+              )}
             </div>
 
             {/* Teams under org */}
