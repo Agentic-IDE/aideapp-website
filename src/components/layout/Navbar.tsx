@@ -119,9 +119,13 @@ export function Navbar() {
         </ul>
         {session ? (
           <div className="flex items-center gap-3">
-            <span style={{ fontSize: 11, color: 'var(--muted)', letterSpacing: '0.03em' }}>
+            <a
+              href="/account"
+              className="no-underline transition-colors"
+              style={{ fontSize: 11, color: 'var(--muted)', letterSpacing: '0.03em' }}
+            >
               {truncateEmail(session.email)}
-            </span>
+            </a>
             <button
               onClick={() => { clearAuthSession(); setSession(null) }}
               style={{
