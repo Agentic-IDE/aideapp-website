@@ -11,6 +11,7 @@ import { AccountPage } from './components/account/AccountPage'
 import { TeamDetailPage } from './components/account/TeamDetailPage'
 import { OrgDetailPage } from './components/account/OrgDetailPage'
 import { InviteAcceptPage } from './components/account/InviteAcceptPage'
+import { PricingPage } from './components/pricing/PricingPage'
 
 export function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export function AppRoutes() {
       <Route path="/account/team/:id" element={<TeamDetailPage />} />
       <Route path="/account/org/:id" element={<OrgDetailPage />} />
       <Route path="/invite/accept" element={<InviteAcceptPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/eula" element={<EulaPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
