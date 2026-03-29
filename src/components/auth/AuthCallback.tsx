@@ -13,7 +13,6 @@ export function AuthCallback() {
 
   useEffect(() => {
     const token = searchParams.get('token')
-    const refresh = searchParams.get('refresh')
     const userId = searchParams.get('userId')
 
     if (!token || !userId) {
