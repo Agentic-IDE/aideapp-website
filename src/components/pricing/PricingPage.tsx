@@ -116,8 +116,8 @@ export function PricingPage() {
         return
       }
 
-      // Use the first org (or could show a selector if multiple)
-      const orgId = userOrgs[0].org_id
+      // Use the most recently created org for checkout
+      const orgId = userOrgs[userOrgs.length - 1].org_id
       const quantity = seatCounts[plan] || 1
 
       const res = await fetch(`${API_BASE}/v1/billing/checkout`, {

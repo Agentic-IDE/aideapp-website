@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Navbar } from '../layout/Navbar'
 import { getAuthSession } from '../../services/auth'
 import { useToast } from '../ui/Toast'
+import { getSubscription, type SubscriptionInfo } from '../../services/billing'
 
 const API_BASE = import.meta.env.VITE_CLOUD_API_URL || import.meta.env.VITE_API_URL || 'http://localhost:3002'
 
@@ -28,8 +29,12 @@ export function TeamDetailPage() {
   const [inviteRole, setInviteRole] = useState('member')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
 
   const isAdmin = team?.your_role === 'admin' || team?.your_role === 'owner'
+  const hasActiveSubscription = subscription &&
+    subscription.tier !== 'basic' &&
+    ['active', 'trialing'].includes(subscription.status)
 
   const fetchAll = async () => {
     if (!session || !id) { navigate('/login'); return }
@@ -40,8 +45,15 @@ export function TeamDetailPage() {
         fetch(`${API_BASE}/v1/teams/${id}/members`, { headers }),
       ])
       if (!teamRes.ok) { navigate('/account'); return }
-      setTeam(await teamRes.json())
+      const teamData = await teamRes.json()
+      setTeam(teamData)
       setMembers(await membersRes.json())
+
+      // Fetch org subscription if team belongs to an org
+      if (teamData.org_id && session) {
+        const sub = await getSubscription(session.token, teamData.org_id)
+        if (sub) setSubscription(sub)
+      }
 
       // Fetch invitations if admin
       const invRes = await fetch(`${API_BASE}/v1/teams/${id}/invitations`, { headers })
@@ -146,7 +158,7 @@ export function TeamDetailPage() {
                       {m.name && <div style={{ fontSize: 11, color: 'var(--muted)' }}>{m.email}</div>}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {isAdmin && m.user_id !== session?.userId ? (
+                      {isAdmin && hasActiveSubscription && m.user_id !== session?.userId ? (
                         <>
                           <select
                             value={m.role}
@@ -168,7 +180,14 @@ export function TeamDetailPage() {
             </div>
 
             {/* Invite */}
-            {isAdmin && (
+            {isAdmin && !hasActiveSubscription && team.org_id && (
+              <div style={cardStyle}>
+                <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>
+                  <Link to={`/account/org/${team.org_id}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>Upgrade your organization</Link> to invite members and manage roles.
+                </p>
+              </div>
+            )}
+            {isAdmin && hasActiveSubscription && (
               <div style={cardStyle}>
                 <h3 style={{ fontFamily: 'var(--fd)', fontWeight: 600, fontSize: 16, color: 'var(--text)', margin: '0 0 12px' }}>Invite Member</h3>
                 <div style={{ display: 'flex', gap: 8 }}>

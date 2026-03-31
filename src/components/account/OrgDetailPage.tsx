@@ -36,6 +36,9 @@ export function OrgDetailPage() {
   const [searchParams] = useSearchParams()
 
   const isAdmin = org?.your_role === 'admin'
+  const hasActiveSubscription = subscription &&
+    subscription.tier !== 'basic' &&
+    ['active', 'trialing'].includes(subscription.status)
 
   // Show billing success toast
   useEffect(() => {
@@ -201,19 +204,25 @@ export function OrgDetailPage() {
                 )}
               </div>
 
+              {!hasActiveSubscription && (
+                <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--surface2)', border: '1px solid var(--border)', marginBottom: 12 }}>
+                  <p style={{ fontSize: 13, color: 'var(--text)', margin: '0 0 8px', fontWeight: 500 }}>
+                    Subscribe to unlock team creation, member invites, and collaboration features.
+                  </p>
+                  <Link to="/pricing" style={{ ...smallBtnStyle, textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>
+                    Choose a Plan
+                  </Link>
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: 8 }}>
-                {subscription && subscription.tier !== 'basic' && isAdmin && (
+                {hasActiveSubscription && isAdmin && (
                   <button
                     onClick={() => session && id && openBillingPortal(session.token, id).catch(e => showToast(e.message, 'error'))}
                     style={smallBtnStyle}
                   >
                     Manage Billing
                   </button>
-                )}
-                {(!subscription || subscription.tier === 'basic') && (
-                  <Link to="/pricing" style={{ ...smallBtnStyle, textDecoration: 'none', textAlign: 'center' }}>
-                    Upgrade
-                  </Link>
                 )}
               </div>
 
@@ -236,11 +245,16 @@ export function OrgDetailPage() {
                   </Link>
                 ))}
               </div>
-              {isAdmin && (
+              {isAdmin && hasActiveSubscription && (
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input type="text" placeholder="New team name" value={newTeamName} onChange={e => setNewTeamName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleCreateTeamUnderOrg()} style={{ ...inputStyle, flex: 1 }} />
                   <button onClick={handleCreateTeamUnderOrg} disabled={!newTeamName.trim()} style={{ ...smallBtnStyle, opacity: !newTeamName.trim() ? 0.5 : 1 }}>Create</button>
                 </div>
+              )}
+              {isAdmin && !hasActiveSubscription && (
+                <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>
+                  <Link to="/pricing" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Upgrade</Link> to create teams.
+                </p>
               )}
             </div>
 
@@ -255,7 +269,7 @@ export function OrgDetailPage() {
                       {m.name && <div style={{ fontSize: 11, color: 'var(--muted)' }}>{m.email}</div>}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {isAdmin && m.user_id !== session?.userId ? (
+                      {isAdmin && hasActiveSubscription && m.user_id !== session?.userId ? (
                         <>
                           <select value={m.role} onChange={e => handleChangeRole(m.user_id, e.target.value)} style={{ ...inputStyle, padding: '4px 8px', fontSize: 11 }}>
                             <option value="member">member</option>
@@ -273,7 +287,7 @@ export function OrgDetailPage() {
             </div>
 
             {/* Invite */}
-            {isAdmin && (
+            {isAdmin && hasActiveSubscription && (
               <div style={cardStyle}>
                 <h3 style={{ fontFamily: 'var(--fd)', fontWeight: 600, fontSize: 16, color: 'var(--text)', margin: '0 0 12px' }}>Invite Member</h3>
                 <div style={{ display: 'flex', gap: 8 }}>

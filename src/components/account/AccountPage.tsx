@@ -76,9 +76,8 @@ export function AccountPage() {
   const [orgs, setOrgs] = useState<OrgMembership[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [newTeamName, setNewTeamName] = useState('')
   const [newOrgName, setNewOrgName] = useState('')
-  const [creating, setCreating] = useState<'team' | 'org' | null>(null)
+  const [creating, setCreating] = useState<'org' | null>(null)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { showToast } = useToast()
@@ -127,27 +126,6 @@ export function AccountPage() {
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
-  const handleCreateTeam = async () => {
-    if (!newTeamName.trim() || !session) return
-    setCreating('team')
-    try {
-      const res = await fetch(`${API_BASE}/v1/teams`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` },
-        body: JSON.stringify({ name: newTeamName.trim() }),
-      })
-      if (res.ok) {
-        setNewTeamName('')
-        showToast(`Team "${newTeamName.trim()}" created!`)
-        fetchData()
-      } else {
-        const data = await res.json()
-        showToast(data.error || 'Failed to create team', 'error')
-      }
-    } catch { showToast('Network error', 'error') }
-    finally { setCreating(null) }
-  }
-
   const handleCreateOrg = async () => {
     if (!newOrgName.trim() || !session) return
     setCreating('org')
@@ -159,8 +137,8 @@ export function AccountPage() {
       })
       if (res.ok) {
         setNewOrgName('')
-        showToast(`Organization "${newOrgName.trim()}" created!`)
-        fetchData()
+        showToast('Organization created! Now choose a plan.', 'info')
+        navigate('/pricing')
       } else {
         const data = await res.json()
         showToast(data.error || 'Failed to create organization', 'error')
@@ -265,20 +243,11 @@ export function AccountPage() {
                 ))}
               </div>
 
-              {/* Create team inline form */}
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input
-                  type="text"
-                  placeholder="New team name"
-                  value={newTeamName}
-                  onChange={e => setNewTeamName(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleCreateTeam()}
-                  style={{ ...inputStyle, flex: 1 }}
-                />
-                <button onClick={handleCreateTeam} disabled={creating === 'team' || !newTeamName.trim()} style={{ ...smallBtnStyle, opacity: creating === 'team' || !newTeamName.trim() ? 0.5 : 1 }}>
-                  {creating === 'team' ? '...' : 'Create'}
-                </button>
-              </div>
+              {teams.length === 0 && orgs.length > 0 && (
+                <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>
+                  Create teams from your <Link to={`/account/org/${orgs[0].org_id}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>organization page</Link>.
+                </p>
+              )}
             </div>
 
             {/* Organizations Card */}
